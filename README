@@ -1,0 +1,41 @@
+Julia and Mandelbrot: paralel
+
+Pentru a rezolva problema am pornit de la implementarea secventiala. Algoritmul
+l-am paralelizat dupa partea reala sau imaginara a numerelor complexe, in
+dependenta de care sunt mai multe.
+
+main - citeste argumentele, creeaza thred-urile, le porneste si asteapta sa se
+       ruleze toate.
+thread_function - functia executata de fiecare thred, daca id este 0 atunci
+                  citesc din fisierul de input julia, dupa care am o bariera ca
+                  vreau sigur intai sa citesc fisierul si sa continui cu
+                  alocarea memoriei, apoi pentru a rula trebuie sa ma asigur ca
+                  alocarea a avut loc, inca o bariera, apoi dupa rulare inca o
+                  bariera pentru a putea scrie rezultatul in fisier, unde scrie
+                  doar un thred, dupa scriere astept toate thred-urile si 
+                  dezaloc memoria dupa care iar am folosit o bariera sa se
+                  finiseze algoritmul julia si mai departe fac la fel pentru
+                  algoritmul mandelbrot.
+run_mandelbrot, run_julia - verific dupa ce sa paralelizez, dupa partea reala
+                 sau imaginara, in dependenta unde sunt mai multe puncte, apoi
+                 calculez multimile mandelbrot, respectiv julia dupa formula
+                 specifica z = z * z + c, unde la mandelbrot z = 0i + 0, iar c
+                 este orice numar din spatiul pe care il avem, iar la julia z
+                 este excat c de la mandelbrot si c este constant, dupa ce
+                 calculez multimea, am o bariera ca sa finiseze toate thred-
+                 urile si apoi sa schimb din coordonatele matricei in cele ale
+                 ecranului.
+cord_mat_to_cord_ecran - tranforma coordonatele matricei in coordonate ecran
+                         pe portiuni care ii corespund thred-ului respectiv.
+free_memory - elibereaza memoriea multimii, la fel paralel, iar pentru a putea
+              elibera memoria pointer-lui catre matrice trebuie intai se fac
+              free pe toate liniile si am iar o bariera.
+allocate_memory - aloca memorie multimii, unde doar un thred aloca pointer-ul,
+                  dupa care am o barierasa fiu sigur ca am alocat matricea si
+                  deja fiecare thred aloca memorie pentru liniile sale.
+write_output_file - scrie multimea intr-un fisier de output julia/mandelbrot.
+read_input_file - citeste datele de input dintr-un fisier de input julia sau 
+                  mandelbrot.
+ get_args - citeste argumentele programului.
+
+ 
